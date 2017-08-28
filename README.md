@@ -9,5 +9,5 @@ Example output: `0.625em /* -- 10px/16px -- */`
 
 TODO:
 - currently based on 16px / allow dynamic input of root-font-size
-- add Icon
-- remove leading 0
+- ~~add Icon~~
+- ~~remove leading 0 in result~~

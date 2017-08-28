@@ -5,7 +5,7 @@ a collection of little helpers for various apps
 type `em#` and the workflow asks for your desired font-size in pixels.
 The output will result in em-Values. The cursor is then place right before "em" so you can easily modify the output to "rem".
 
-Example output: `0.625em /* -- 10px/16px -- */`
+Example output: `0.625em; /* -- 10px/16px -- */`
 
 ![Screenshot](/.screenshots/pixelsToEm.alfredworkflow.gif)
 

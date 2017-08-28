@@ -7,6 +7,8 @@ The output will result in em-Values. The cursor is then place right before "em" 
 
 Example output: `0.625em /* -- 10px/16px -- */`
 
+![Screenshot](/.screenshots/pixelsToEm.alfredworkflow.gif)
+
 TODO:
 - currently based on 16px / allow dynamic input of root-font-size
 - ~~add Icon~~

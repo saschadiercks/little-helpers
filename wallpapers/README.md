@@ -1,5 +1,5 @@
 ## textured-black.png
-![textured-black.jpg on iPhone and Macbook](.sreenshots/textured-black.jpg)
+![textured-black.jpg on iPhone and Macbook](/.screenshots/textured-black.jpg)
 
 
 I like my wallpaper to be very subtle because it annoys me, when I can't read the text due to a *fancy* wallpaper. This wallpaper is all black with a little texture and a vignette.

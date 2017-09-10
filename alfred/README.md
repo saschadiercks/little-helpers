@@ -8,8 +8,8 @@ Example output: `.625em; /* 10px / 16px */`
 
 ## *Attention
 The snippet keyword is stripped when a workflow is exported. So make sure, you set your own keyword in the first element of the workflow. I'm using:
-keyword: em
-suffix: #
+- keyword: em
+- suffix: #
 
 ## Requirements
 Make sure you are using Alfred 3.4 or above

@@ -7,7 +7,7 @@ Example output: `.625em; /* 10px / 16px */`
 ![Screenshot](/.screenshots/pixelsToEm.alfredworkflow.gif)
 
 ## *Attention
-The snippet keyword is stripped whem a workflow is exported. So make sure, you set your own keyword in the first element of the workflow. I'm using:
+The snippet keyword is stripped when a workflow is exported. So make sure, you set your own keyword in the first element of the workflow. I'm using:
 keyword: em
 suffix: #
 

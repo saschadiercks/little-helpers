@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="de">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>pixels-to-em</title>
+	<meta name="description" content="Convert pixels to em" />
+	<meta name="keywords" content="pixels, em, rem, css, javascript" />
+
+	<!-- using onpage-CSS for project-pages -->
+	<style media="screen">
+
+	</style>
+
+	<script type="text/javascript">
+		document.onreadystatechange = function () {
+			if (document.readyState === "interactive") {
+
+				// wait for keyup-Events
+				var inputListener = document.getElementsByClassName('js-input');
+				for(i=0; i < inputListener.length; i++) {
+					inputListener[i].addEventListener('keyup', function(event) {
+						calculateValues();
+					});
+				}
+
+				// calculations
+				function getValues() {
+					var inputTargetValue = document.getElementById('input-target').value;
+					var inputParentValue = document.getElementById('input-parent').value;
+					return [inputTargetValue, inputParentValue];
+				}
+
+				function calculateValues() {
+					var values = getValues();
+					var inputTargetValue = values[0];
+					var inputParentValue = values[1];
+					var result = inputTargetValue/inputParentValue;
+					parseResult(result,inputTargetValue,inputParentValue);
+				}
+
+				// output the result
+				function parseResult(result,inputTargetValue,inputParentValue) {
+					var resultContainer = document.getElementById('result');
+					if(isNaN(result) || result === 0 || result === Infinity) {
+						resultContainer.innerHTML = '';
+					} else {
+						resultContainer.innerHTML = result + 'em /*-- ' + inputTargetValue + 'px / ' + inputParentValue + 'px --*/';
+					}
+				}
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<div id="calculator">
+		<h1>EM to Pixels</h1>
+		<div>
+			<input type="number" value="" placeholder="desired output in pixels" id="input-target" class="js-input" /> <label for="input-target">px</label>
+		</div>
+		<div>
+			<input type="number" value="16" placeholder="set parent size to" id="input-parent" class="js-input" /> <label for="input-parent">px</label>
+		</div>
+		<div id="result"></div>
+	</div>
+</body>
+</html>

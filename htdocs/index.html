@@ -8,7 +8,11 @@
 
 	<!-- using onpage-CSS for project-pages -->
 	<style media="screen">
-
+		body { font-family:-apple-system, 'Open Sans', 'Helvetica Neue', sans-serif; }
+		input {
+			padding: 5px 2px;
+		}
+		.result { font-family: 'Courier New', Courier, monospace; }
 	</style>
 
 	<script type="text/javascript">
@@ -25,8 +29,8 @@
 
 				// calculations
 				function getValues() {
-					var inputTargetValue = document.getElementById('input-target').value;
-					var inputParentValue = document.getElementById('input-parent').value;
+					var inputTargetValue = document.getElementById('em-px-input-target').value;
+					var inputParentValue = document.getElementById('em-px-input-parent').value;
 					return [inputTargetValue, inputParentValue];
 				}
 
@@ -40,7 +44,7 @@
 
 				// output the result
 				function parseResult(result,inputTargetValue,inputParentValue) {
-					var resultContainer = document.getElementById('result');
+					var resultContainer = document.getElementById('em-px-result');
 					if(isNaN(result) || result === 0 || result === Infinity) {
 						resultContainer.innerHTML = '';
 					} else {
@@ -56,12 +60,12 @@
 	<div id="calculator">
 		<h1>EM to Pixels</h1>
 		<div>
-			<input type="number" value="" placeholder="desired output in pixels" id="input-target" class="js-input" /> <label for="input-target">px</label>
+			<input type="number" value="" placeholder="desired output in pixels" id="em-px-input-target" class="js-input" /> <label for="em-px-input-target">px</label>
 		</div>
 		<div>
-			<input type="number" value="16" placeholder="set parent size to" id="input-parent" class="js-input" /> <label for="input-parent">px</label>
+			<input type="number" value="16" placeholder="set parent size to" id="em-px-input-parent" class="js-input" /> <label for="em-px-input-parent">px</label>
 		</div>
-		<div id="result"></div>
+		<div id="em-px-result" class="result"></div>
 	</div>
 </body>
 </html>

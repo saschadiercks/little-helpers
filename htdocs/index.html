@@ -6,6 +6,25 @@
 	<meta name="description" content="Convert pixels to em" />
 	<meta name="keywords" content="pixels, em, rem, css, javascript" />
 
+	<!-- mobile scaling -->
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<!-- IE-Stuff -->
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<meta name="MSSmartTagsPreventParsing" content="TRUE" />
+
+	<!-- Website as app -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+	<!-- Short Names -->
+	<meta name="apple-mobile-web-app-title" content="Little Helpers" />
+	<meta name="application-name" content="Little Helpers" />
+
+	<!-- Icons -->
+	<link rel="apple-touch-icon" href="apple-touch-icon-foto-228x228-precomposed.png" sizes="228x228" />
+	<link rel="shortcut icon" href="favicon.ico" />
+
 	<!-- using onpage-CSS for project-pages -->
 	<style media="screen">
 		body { font-family:-apple-system, 'Open Sans', 'Helvetica Neue', sans-serif; }
@@ -39,7 +58,14 @@
 					var inputTargetValue = values[0];
 					var inputParentValue = values[1];
 					var result = inputTargetValue/inputParentValue;
+					if(result < 1) { removeLeadingZero(result); }
 					parseResult(result,inputTargetValue,inputParentValue);
+				}
+
+				function removeLeadingZero(value) {
+					var result = value.toString();
+					var result = result.replace(/^0./, '.');
+					return result;
 				}
 
 				// output the result

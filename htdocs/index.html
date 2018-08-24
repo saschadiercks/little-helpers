@@ -27,71 +27,114 @@
 
 	<!-- using onpage-CSS for project-pages -->
 	<style media="screen">
-		body { font-family:-apple-system, 'Open Sans', 'Helvetica Neue', sans-serif; }
-		input {
-			padding: 5px 2px;
+		body {
+			font-family:-apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 		}
-		.result { font-family: 'Courier New', Courier, monospace; }
+		input[type=number]::-webkit-inner-spin-button,
+		input[type=number]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			appearance: none;
+			margin: 0;
+		}
+		.widget { font-size: .75rem; } /*-- 12px / 16px --*/
+		.widget__title { font-size: 1rem; }
+		.widget__row { margin-bottom: 4px; }
+		.widget__input {
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-shadow: inset 1px 1px 3px rgba(0,0,0,.2);
+			padding: 8px;
+		}
+		.widget__checkbox {
+			border: 1px solid #ccc;
+		}
+		.widget__button {
+			background-color: #007acc;
+			border-radius: 4px;
+			border-width: 0;
+			color: #fdfdfd;
+			padding: 8px;
+		}
+		.widget__result {
+			font-family: 'Courier New', Courier, monospace;
+			padding: 8px;
+		}
 	</style>
 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript">
-		document.onreadystatechange = function () {
-			if (document.readyState === "interactive") {
+		$(function(){
+			// -- copy values
+			// target to copy from is assigned to button via data-
+			var copyTrigger = $(".js-copy"),
+				copyTarget = "copy-target",
+				copyTemp = $("<input>");
 
-				// wait for keyup-Events
-				var inputListener = document.getElementsByClassName('js-input');
-				for(i=0; i < inputListener.length; i++) {
-					inputListener[i].addEventListener('keyup', function(event) {
-						calculateValues();
-					});
+			$(copyTrigger).click(function(){
+				target = "#" + $(this).data(copyTarget);
+				$("body").append(copyTemp);
+				$(copyTemp).val($(target).text()).select();
+				document.execCommand("copy");
+				$(copyTemp).remove();
+			});
+
+			// -- START: Pixels to EM
+			// set defaults
+			var emPxUnitSwitch = $("#em-px-unit-switch"),
+				emPxOutput = $("#em-px-result"),
+				emPxInput = $(".js-input"),
+				unitSize = "em",
+				outputDefault = "&nbsp;";
+
+			// calculation
+			$(emPxInput).keyup(function(){
+				emPxInputTargetValue = $("#em-px-input-target").val();
+				emPxInputParentValue = $("#em-px-input-parent").val();
+				emPxResult =  emPxInputTargetValue / emPxInputParentValue;
+				outputResult();
+			});
+
+			// switch units
+			$(emPxUnitSwitch).click(function(){
+				if($(this).prop("checked") === true) {
+					unitSize = "rem";
+				} else {
+					unitSize = "em";
+				}
+				outputResult();
+			});
+
+			// output
+			function outputResult() {
+				if(emPxResult < 1) {
+					emPxResult = String(emPxResult).replace(/^0./, '.');
 				}
 
-				// calculations
-				function getValues() {
-					var inputTargetValue = document.getElementById('em-px-input-target').value;
-					var inputParentValue = document.getElementById('em-px-input-parent').value;
-					return [inputTargetValue, inputParentValue];
-				}
-
-				function calculateValues() {
-					var values = getValues();
-					var inputTargetValue = values[0];
-					var inputParentValue = values[1];
-					var result = inputTargetValue/inputParentValue;
-					if(result < 1) { removeLeadingZero(result); }
-					parseResult(result,inputTargetValue,inputParentValue);
-				}
-
-				function removeLeadingZero(value) {
-					var result = value.toString();
-					var result = result.replace(/^0./, '.');
-					return result;
-				}
-
-				// output the result
-				function parseResult(result,inputTargetValue,inputParentValue) {
-					var resultContainer = document.getElementById('em-px-result');
-					if(isNaN(result) || result === 0 || result === Infinity) {
-						resultContainer.innerHTML = '';
-					} else {
-						resultContainer.innerHTML = result + 'em; /*-- ' + inputTargetValue + 'px / ' + inputParentValue + 'px --*/';
-					}
+				if(isNaN(emPxResult) || emPxResult == 0 || emPxResult === Infinity) {
+					emPxOutput.html(outputDefault);
+				} else {
+					emPxOutput.html(emPxResult + unitSize + " /*-- " + emPxInputTargetValue + "px / " + emPxInputParentValue + "px --*/");
 				}
 			}
-		}
+			// -- END: Pixels to EM
+		});
 	</script>
 </head>
 
 <body>
-	<div id="calculator">
-		<h1>EM to Pixels</h1>
-		<div>
-			<input type="number" value="" placeholder="desired output in pixels" id="em-px-input-target" class="js-input" /> <label for="em-px-input-target">px</label>
+	<div class="widget" id="em-px-calculator">
+		<h2 class="widget__title">EM to Pixels</h2>
+		<div class="widget__row">
+			<input type="number" min="0" value="" placeholder="desired output in pixels" id="em-px-input-target" class="widget__input js-input" /> <label for="em-px-input-target">px</label>
 		</div>
-		<div>
-			<input type="number" value="16" placeholder="set parent size to" id="em-px-input-parent" class="js-input" /> <label for="em-px-input-parent">px</label>
+		<div class="widget__row">
+			<input type="number" value="16" placeholder="set parent size to" id="em-px-input-parent" class="widget__input js-input" /> <label for="em-px-input-parent">px</label>
 		</div>
-		<div id="em-px-result" class="result"></div>
+		<div id="em-px-result" class="widget__row widget__result">&nbsp;</div>
+		<div class="widget__row">
+			<input type="checkbox" id="em-px-unit-switch" class="widget__checkbox js-input" /> <label for="em-px-unit-switch">rem</label>
+			<button class="widget__button js-copy" data-copy-target="em-px-result">Copy</button>
+		</div>
 	</div>
 </body>
 </html>

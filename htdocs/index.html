@@ -61,48 +61,44 @@
 		}
 	</style>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript">
-		$(function(){
+		document.addEventListener('DOMContentLoaded',function(){
 			// -- copy values
 			// target to copy from is assigned to button via data-
-			var copyTrigger = $(".js-copy"),
-				copyTarget = "copy-target",
-				copyTemp = $("<input>");
-
-			$(copyTrigger).click(function(){
-				target = "#" + $(this).data(copyTarget);
-				$("body").append(copyTemp);
-				$(copyTemp).val($(target).text()).select();
-				document.execCommand("copy");
-				$(copyTemp).remove();
-			});
+			var copyTrigger = document.querySelector('.js-copy');
+			copyTrigger.onclick = function() {
+				var selection = document.querySelector('#' + copyTrigger.dataset.copySource);
+				window.getSelection().selectAllChildren(selection);
+				document.execCommand('copy');
+			}
 
 			// -- START: Pixels to EM
 			// set defaults
-			var emPxUnitSwitch = $("#em-px-unit-switch"),
-				emPxOutput = $("#em-px-result"),
-				emPxInput = $(".js-input"),
-				unitSize = "em",
-				outputDefault = "&nbsp;";
+			var emPxUnitSwitch = document.querySelector('#em-px-unit-switch'),
+				emPxOutput = document.querySelector('#em-px-result'),
+				emPxInput = document.querySelectorAll('.js-input'),
+				emPxInputTarget = document.querySelector('#em-px-input-target'),
+				emPxInputParent = document.querySelector('#em-px-input-parent'),
+				emPxResult = 0,
+				unitSize = 'em',
+				outputDefault = '&nbsp;';
 
 			// calculation
-			$(emPxInput).keyup(function(){
-				emPxInputTargetValue = $("#em-px-input-target").val();
-				emPxInputParentValue = $("#em-px-input-parent").val();
-				emPxResult =  emPxInputTargetValue / emPxInputParentValue;
+			document.addEventListener('keyup', keyUpHandler, false);
+			function keyUpHandler(){
+				emPxResult =  emPxInputTarget.value / emPxInputParent.value;
 				outputResult();
-			});
+			};
 
 			// switch units
-			$(emPxUnitSwitch).click(function(){
-				if($(this).prop("checked") === true) {
-					unitSize = "rem";
+			emPxUnitSwitch.onclick = function(){
+				if(emPxUnitSwitch.checked === true) {
+					unitSize = 'rem';
 				} else {
-					unitSize = "em";
+					unitSize = 'em';
 				}
 				outputResult();
-			});
+			};
 
 			// output
 			function outputResult() {
@@ -111,9 +107,9 @@
 				}
 
 				if(isNaN(emPxResult) || emPxResult == 0 || emPxResult === Infinity) {
-					emPxOutput.html(outputDefault);
+					emPxOutput.innerHTML = outputDefault;
 				} else {
-					emPxOutput.html(emPxResult + unitSize + " /*-- " + emPxInputTargetValue + "px / " + emPxInputParentValue + "px --*/");
+					emPxOutput.innerHTML = emPxResult + unitSize + ' /*-- ' + emPxInputTarget.value + 'px / ' + emPxInputParent.value + 'px --*/';
 				}
 			}
 			// -- END: Pixels to EM
@@ -125,15 +121,18 @@
 	<div class="widget" id="em-px-calculator">
 		<h2 class="widget__title">EM to Pixels</h2>
 		<div class="widget__row">
-			<input type="number" min="0" value="" placeholder="desired output in pixels" id="em-px-input-target" class="widget__input js-input" /> <label for="em-px-input-target">px</label>
+			<input type="number" min="0" value="" placeholder="desired output in pixels" id="em-px-input-target" class="widget__input js-input" />
+			<label for="em-px-input-target">px</label>
 		</div>
 		<div class="widget__row">
-			<input type="number" value="16" placeholder="set parent size to" id="em-px-input-parent" class="widget__input js-input" /> <label for="em-px-input-parent">px</label>
+			<input type="number" value="16" placeholder="set parent size to" id="em-px-input-parent" class="widget__input js-input" />
+			<label for="em-px-input-parent">px</label>
 		</div>
 		<div id="em-px-result" class="widget__row widget__result">&nbsp;</div>
 		<div class="widget__row">
-			<input type="checkbox" id="em-px-unit-switch" class="widget__checkbox js-input" /> <label for="em-px-unit-switch">rem</label>
-			<button class="widget__button js-copy" data-copy-target="em-px-result">Copy</button>
+			<input type="checkbox" id="em-px-unit-switch" class="widget__checkbox js-input" />
+			<label for="em-px-unit-switch">rem</label>
+			<button class="widget__button js-copy" data-copy-source="em-px-result">Copy</button>
 		</div>
 	</div>
 </body>

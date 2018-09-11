@@ -27,8 +27,21 @@
 
 	<!-- using onpage-CSS for project-pages -->
 	<style media="screen">
+		/* -- variables -- */
+		:root {
+			--base-button-bg: #007acc;
+			--base-button-bg-hover: #0e8ee4;
+			--base-button-color: #fdfdfd;
+			--base-border-color: #ccc;
+			--base-border-radius: 3px;
+			--base-padding: .5rem;
+			--base-shadow-color: rgba(0,0,0,.2);
+		}
+
+		/* -- defaults -- */
 		body {
-			font-family:-apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
+			font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
+			font-size: .875rem; /*-- 14px / 16px --*/
 		}
 		input[type=number] {
  			-moz-appearance: textfield;
@@ -40,29 +53,37 @@
 			appearance: none;
 			margin: 0;
 		}
-		.widget { font-size: .75rem; } /*-- 12px / 16px --*/
-		.widget__title { font-size: 1rem; }
+
+		/* -- widgets -- */
 		.widget__row { margin-bottom: 1rem; }
-		.widget__label--pre { display: block; }
-		.widget__input {
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			box-shadow: inset 1px 1px 3px rgba(0,0,0,.2);
-			padding: 8px;
+		.widget__label {
+			display: inline-block;
+			padding: var(--base-padding) 0;
+			vertical-align: middle;
 		}
-		.widget__checkbox {
-			border: 1px solid #ccc;
+		.widget__label.widget__label--pre { display: block; }
+		.widget__input {
+			border: 1px solid var(--base-border-color);
+			border-radius: var(--base-border-radius);
+			box-shadow: inset 1px 1px 3px var(--base-shadow-color);
+			padding: var(--base-padding);
 		}
 		.widget__button {
-			background-color: #007acc;
-			border-radius: 4px;
+			background-color: var(--base-button-bg);
+			border-radius: var(--base-border-radius);
 			border-width: 0;
-			color: #fdfdfd;
-			padding: 8px;
+			color: var(--base-button-color);
+			cursor: pointer;
+			padding: var(--base-padding);
+			transition: .2s background-color ease;
+		}
+		.widget__button:hover {
+			background-color: var(--base-button-bg-hover);
+			color: var(--base-button-color);
 		}
 		.widget__result {
 			font-family: 'Courier New', Courier, monospace;
-			padding: 8px;
+			padding: var(--base-padding);
 		}
 	</style>
 
@@ -127,7 +148,7 @@
 	<div class="widget" id="em-px-calculator">
 		<h2 class="widget__title">EM to Pixels</h2>
 		<div class="widget__row">
-			<label class="widget__label widget__label--pre" for="em-px-input-target">desired output in pixels</label>
+			<label class="widget__label widget__label--pre" for="em-px-input-target">desired output</label>
 			<input type="number" min="0" value="" placeholder="12" id="em-px-input-target" class="widget__input js-input" />
 			<label class="widget__label--after"for="em-px-input-target">px</label>
 		</div>
@@ -139,7 +160,7 @@
 		<div id="em-px-result" class="widget__row widget__result">&nbsp;</div>
 		<div class="widget__row">
 			<input type="checkbox" id="em-px-unit-switch" class="widget__checkbox js-input" />
-			<label for="em-px-unit-switch">rem</label>
+			<label class="widget__label" for="em-px-unit-switch">rem</label>
 			<button class="widget__button js-copy" data-copy-source="em-px-result">Copy</button>
 		</div>
 	</div>

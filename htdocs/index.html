@@ -30,6 +30,10 @@
 		body {
 			font-family:-apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 		}
+		input[type=number] {
+ 			-moz-appearance: textfield;
+			 	 appearance: textfield;
+		}
 		input[type=number]::-webkit-inner-spin-button,
 		input[type=number]::-webkit-outer-spin-button {
 			-webkit-appearance: none;
@@ -70,6 +74,7 @@
 				var selection = document.querySelector('#' + copyTrigger.dataset.copySource);
 				window.getSelection().selectAllChildren(selection);
 				document.execCommand('copy');
+				window.getSelection().removeAllRanges();
 			}
 
 			// -- START: Pixels to EM

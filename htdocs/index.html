@@ -42,7 +42,8 @@
 		}
 		.widget { font-size: .75rem; } /*-- 12px / 16px --*/
 		.widget__title { font-size: 1rem; }
-		.widget__row { margin-bottom: 4px; }
+		.widget__row { margin-bottom: 1rem; }
+		.widget__label--pre { display: block; }
 		.widget__input {
 			border: 1px solid #ccc;
 			border-radius: 4px;
@@ -126,12 +127,14 @@
 	<div class="widget" id="em-px-calculator">
 		<h2 class="widget__title">EM to Pixels</h2>
 		<div class="widget__row">
-			<input type="number" min="0" value="" placeholder="desired output in pixels" id="em-px-input-target" class="widget__input js-input" />
-			<label for="em-px-input-target">px</label>
+			<label class="widget__label widget__label--pre" for="em-px-input-target">desired output in pixels</label>
+			<input type="number" min="0" value="" placeholder="12" id="em-px-input-target" class="widget__input js-input" />
+			<label class="widget__label--after"for="em-px-input-target">px</label>
 		</div>
 		<div class="widget__row">
-			<input type="number" value="16" placeholder="set parent size to" id="em-px-input-parent" class="widget__input js-input" />
-			<label for="em-px-input-parent">px</label>
+			<label class="widget__label widget__label--pre" for="em-px-input-parent">set parent size to</label>
+			<input type="number" value="16" placeholder="16" id="em-px-input-parent" class="widget__input js-input" />
+			<label class="widget__label--after"for="em-px-input-parent">px</label>
 		</div>
 		<div id="em-px-result" class="widget__row widget__result">&nbsp;</div>
 		<div class="widget__row">

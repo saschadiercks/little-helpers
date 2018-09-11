@@ -29,6 +29,8 @@
 	<style media="screen">
 		/* -- variables -- */
 		:root {
+			--base-body-bg: #fff;
+			--base-body-color: #333;
 			--base-button-bg: #007acc;
 			--base-button-bg-hover: #0e8ee4;
 			--base-button-color: #fdfdfd;
@@ -36,12 +38,37 @@
 			--base-border-radius: 3px;
 			--base-padding: .5rem;
 			--base-shadow-color: rgba(0,0,0,.2);
+			--label-width: 30%;
+			--label-max-width: 200px;
+			--input-width: 60%;
+			--input-max-width: var(--label-max-width);
+		}
+		/* -- reset -- */
+		html {
+			box-sizing:border-box;
+			font-size:100%;
+			height:100%;
+			overflow-y:auto;
+			-webkit-text-size-adjust:100%;
+			-ms-text-size-adjust:100%;
+		}
+		*,*:before,*:after{ box-sizing:inherit;}
+		body {
+			-webkit-font-smoothing:antialiased;
+			-moz-osx-font-smoothing:grayscale;
 		}
 
 		/* -- defaults -- */
 		body {
+			background-color: var(--base-body-bg);
+			color: var(--base-body-color);
+			display: grid;
 			font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 			font-size: .875rem; /*-- 14px / 16px --*/
+			grid-gap: 1rem;
+			grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+			margin: 0;
+			padding: 1rem;
 		}
 		input[type=number] {
  			-moz-appearance: textfield;
@@ -55,18 +82,40 @@
 		}
 
 		/* -- widgets -- */
-		.widget__row { margin-bottom: 1rem; }
+		.widget {
+			background-color: #eee;
+			border-radius: 8px;
+			padding: 1rem;
+		}
+		.widget__title {
+			border-bottom: 1px solid var(--base-border-color);
+			margin-top: 0;
+			padding-bottom: var(--base-padding);
+			text-align: center;
+		}
+		.widget__row { margin-bottom: var(--base-padding); }
 		.widget__label {
 			display: inline-block;
+			max-width: var(--label-max-width);
 			padding: var(--base-padding) 0;
 			vertical-align: middle;
 		}
-		.widget__label.widget__label--pre { display: block; }
+		.widget__label.widget__label--pre {
+			text-align: right;
+			width: var(--label-width);
+		}
 		.widget__input {
 			border: 1px solid var(--base-border-color);
 			border-radius: var(--base-border-radius);
 			box-shadow: inset 1px 1px 3px var(--base-shadow-color);
 			padding: var(--base-padding);
+			width: var(--input-width);
+		}
+		.widget__label.widget__label--after {
+			transform: translateX(-200%);
+		}
+		.widget__checkbox {
+			margin-left: calc(1% + var(--label-width));
 		}
 		.widget__button {
 			background-color: var(--base-button-bg);
@@ -74,6 +123,9 @@
 			border-width: 0;
 			color: var(--base-button-color);
 			cursor: pointer;
+			font-weight: 600;
+			margin-left: calc(1% + var(--label-width));
+			width: var(--input-width);
 			padding: var(--base-padding);
 			transition: .2s background-color ease;
 		}
@@ -83,7 +135,7 @@
 		}
 		.widget__result {
 			font-family: 'Courier New', Courier, monospace;
-			padding: var(--base-padding);
+			margin-left: calc(1% + var(--label-width));
 		}
 	</style>
 
@@ -150,24 +202,50 @@
 </head>
 
 <body>
+	<!-- START: em to px -->
 	<div class="widget" id="em-px-calculator">
 		<h2 class="widget__title">EM to Pixels</h2>
 		<div class="widget__row">
 			<label class="widget__label widget__label--pre" for="em-px-input-target">desired output</label>
 			<input type="number" min="0" value="" placeholder="12" id="em-px-input-target" class="widget__input js-input" />
-			<label class="widget__label--after"for="em-px-input-target">px</label>
+			<label class="widget__label widget__label--after"for="em-px-input-target">px</label>
 		</div>
 		<div class="widget__row">
 			<label class="widget__label widget__label--pre" for="em-px-input-parent">set parent size to</label>
 			<input type="number" value="16" placeholder="16" id="em-px-input-parent" class="widget__input js-input" />
-			<label class="widget__label--after"for="em-px-input-parent">px</label>
+			<label class="widget__label widget__label--after"for="em-px-input-parent">px</label>
 		</div>
 		<div id="em-px-result" class="widget__row widget__result">&nbsp;</div>
 		<div class="widget__row">
 			<input type="checkbox" id="em-px-unit-switch" class="widget__checkbox js-input" />
 			<label class="widget__label" for="em-px-unit-switch">rem</label>
+		</div>
+		<div class="widget__row">
 			<button class="widget__button js-copy" data-copy-source="em-px-result">Copy</button>
 		</div>
 	</div>
+	<!-- END: em to px -->
+
+	<!-- START: percentage-calculator -->
+	<div class="widget" id="em-px-calculator">
+		<h2 class="widget__title">Calculate Percentages</h2>
+		<div class="widget__row">
+		</div>
+		<div class="widget__row">
+			<button class="widget__button js-copy" data-copy-source="em-px-result-2">Copy</button>
+		</div>
+	</div>
+	<!-- END: em to px -->
+
+	<!-- START: percentage-calculator -->
+	<div class="widget" id="em-px-calculator">
+		<h2 class="widget__title">Calculate Conversions</h2>
+		<div class="widget__row">
+		</div>
+		<div class="widget__row">
+			<button class="widget__button js-copy" data-copy-source="em-px-result-2">Copy</button>
+		</div>
+	</div>
+	<!-- END: em to px -->
 </body>
 </html>

@@ -86,12 +86,12 @@
 				emPxInputParent = document.querySelector('#em-px-input-parent'),
 				emPxResult = 0,
 				unitSize = 'em',
-				outputDefault = '&nbsp;';
+				renderDefault = '&nbsp;';
 
 			// calculation
 			document.addEventListener('keyup', keyUpHandler, false);
 			function keyUpHandler(){
-				emPxResult =  emPxInputTarget.value / emPxInputParent.value;
+				emPxResult =  Math.round(emPxInputTarget.value / emPxInputParent.value * 10000) / 10000;
 				outputResult();
 			};
 
@@ -112,9 +112,9 @@
 				}
 
 				if(isNaN(emPxResult) || emPxResult == 0 || emPxResult === Infinity) {
-					emPxOutput.innerHTML = outputDefault;
+					emPxOutput.innerHTML = renderDefault;
 				} else {
-					emPxOutput.innerHTML = emPxResult + unitSize + ' /*-- ' + emPxInputTarget.value + 'px / ' + emPxInputParent.value + 'px --*/';
+					emPxOutput.innerHTML = emPxResult + unitSize + '; /*-- ' + emPxInputTarget.value + 'px / ' + emPxInputParent.value + 'px --*/';
 				}
 			}
 			// -- END: Pixels to EM

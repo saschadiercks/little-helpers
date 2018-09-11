@@ -89,15 +89,20 @@
 
 	<script type="text/javascript">
 		document.addEventListener('DOMContentLoaded',function(){
-			// -- copy values
-			// target to copy from is assigned to button via data-
-			var copyTrigger = document.querySelector('.js-copy');
-			copyTrigger.onclick = function() {
-				var selection = document.querySelector('#' + copyTrigger.dataset.copySource);
+			// -- START: copy values
+			// target (must be unique/id) to copy from is assigned to button via data-
+			var copyTrigger = document.querySelectorAll('.js-copy');
+			for(var i = 0; i < copyTrigger.length; i++){
+				copyTrigger[i].addEventListener('click', copyContent);
+			}
+
+			function copyContent() {
+				var selection = document.querySelector('#' + this.dataset.copySource);
 				window.getSelection().selectAllChildren(selection);
 				document.execCommand('copy');
 				window.getSelection().removeAllRanges();
 			}
+			// -- END: copy values
 
 			// -- START: Pixels to EM
 			// set defaults

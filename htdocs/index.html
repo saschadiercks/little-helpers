@@ -30,18 +30,20 @@
 		/* -- variables -- */
 		:root {
 			--base-body-bg: #fff;
-			--base-body-color: #333;
+			--base-body-color: #444;
 			--base-button-bg: #007acc;
 			--base-button-bg-hover: #0e8ee4;
 			--base-button-color: #fdfdfd;
-			--base-border-color: #ccc;
+			--base-border-color: #f0f0f0;
 			--base-border-radius: 3px;
 			--base-padding: .5rem;
 			--base-shadow-color: rgba(0,0,0,.2);
 			--label-width: 30%;
 			--label-max-width: 200px;
 			--input-width: 60%;
+			--input-border-color: #ddd;
 			--input-max-width: var(--label-max-width);
+			--widget-border: calc(var(--base-border-radius) * 2) solid var(--base-border-color);
 		}
 		/* -- reset -- */
 		html {
@@ -83,9 +85,10 @@
 
 		/* -- widgets -- */
 		.widget {
-			background-color: #eee;
-			border-radius: 8px;
-			padding: 1rem;
+			background-color: var(--widget-bg);
+			border-radius: calc(var(--base-border-radius) * 2);
+			border: var(--widget-border);
+			padding: var(--base-padding);
 		}
 		.widget__title {
 			border-bottom: 1px solid var(--base-border-color);
@@ -105,17 +108,20 @@
 			width: var(--label-width);
 		}
 		.widget__input {
-			border: 1px solid var(--base-border-color);
+			border: 1px solid var(--input-border-color);
 			border-radius: var(--base-border-radius);
 			box-shadow: inset 1px 1px 3px var(--base-shadow-color);
 			padding: var(--base-padding);
 			width: var(--input-width);
 		}
 		.widget__label.widget__label--after {
-			transform: translateX(-200%);
+			margin-left: -1rem;				/* remove whitespace */
+			text-align: right;
+			transform: translateX(-100%);	/* move over input */
 		}
 		.widget__checkbox {
 			margin-left: calc(1% + var(--label-width));
+			vertical-align: middle;
 		}
 		.widget__button {
 			background-color: var(--base-button-bg);

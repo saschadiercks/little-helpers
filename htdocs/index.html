@@ -126,18 +126,23 @@
 		.widget__button {
 			background-color: var(--base-button-bg);
 			border-radius: var(--base-border-radius);
-			border-width: 0;
+			border: 1px solid var(--base-button-bg);
 			color: var(--base-button-color);
 			cursor: pointer;
 			font-weight: 600;
-			margin-left: calc(1% + var(--label-width));
-			width: var(--input-width);
+			width: calc(var(--input-width) / 2 - .2rem);
 			padding: var(--base-padding);
 			transition: .2s background-color ease;
 		}
+		.widget__button:first-child { margin-left: calc(1% + var(--label-width)); }
 		.widget__button:hover {
 			background-color: var(--base-button-bg-hover);
+			border-color: var(--base-button-bg-hover);
 			color: var(--base-button-color);
+		}
+		.widget__button--secondary {
+			background-color: var(--base-button-color);
+			color: var(--base-button-bg);
 		}
 		.widget__result {
 			font-family: 'Courier New', Courier, monospace;
@@ -154,13 +159,29 @@
 				copyTrigger[i].addEventListener('click', copyContent);
 			}
 
-			function copyContent() {
+			function copyContent(event) {
 				var selection = document.querySelector('#' + this.dataset.copySource);
 				window.getSelection().selectAllChildren(selection);
 				document.execCommand('copy');
 				window.getSelection().removeAllRanges();
+				event.preventDefault();
 			}
 			// -- END: copy values
+
+			// -- START: clear values
+			// target (must be unique/id) to copy from is assigned to button via data-
+			var clearTrigger = document.querySelectorAll('.js-clear'),
+				clearDefault = '&nbsp;';
+
+			for(var i = 0; i < clearTrigger.length; i++){
+				clearTrigger[i].addEventListener('click', clearContent);
+			}
+
+			function clearContent() {
+				var clearTarget = document.querySelector('#' + this.dataset.clearTarget);
+				clearTarget.innerHTML = clearDefault;
+			}
+			// -- END: clear values
 
 			// -- START: Pixels to EM
 			// set defaults
@@ -170,52 +191,90 @@
 				emPxInputTarget = document.querySelector('#em-px-input-target'),
 				emPxInputParent = document.querySelector('#em-px-input-parent'),
 				emPxResult = 0,
-				unitSize = 'em',
-				renderDefault = '&nbsp;';
+				emPxUnitSize = 'em';
 
 			// calculation
-			document.addEventListener('keyup', keyUpHandler, false);
-			function keyUpHandler(){
+			document.addEventListener('keyup', emPxKeyUpHandler, false);
+			function emPxKeyUpHandler(){
 				emPxResult =  Math.round(emPxInputTarget.value / emPxInputParent.value * 10000) / 10000;
-				outputResult();
+				emPxOutputResult();
 			};
 
 			// switch units
 			emPxUnitSwitch.onclick = function(){
 				if(emPxUnitSwitch.checked === true) {
-					unitSize = 'rem';
+					emPxUnitSize = 'rem';
 				} else {
-					unitSize = 'em';
+					emPxUnitSize = 'em';
 				}
-				outputResult();
+				emPxOutputResult();
 			};
 
 			// output
-			function outputResult() {
+			function emPxOutputResult() {
 				if(emPxResult < 1) {
 					emPxResult = String(emPxResult).replace(/^0./, '.');
 				}
 
 				if(isNaN(emPxResult) || emPxResult == 0 || emPxResult === Infinity) {
-					emPxOutput.innerHTML = renderDefault;
+					emPxOutput.innerHTML = clearDefault;
 				} else {
-					emPxOutput.innerHTML = emPxResult + unitSize + '; /*-- ' + emPxInputTarget.value + 'px / ' + emPxInputParent.value + 'px --*/';
+					emPxOutput.innerHTML = emPxResult + emPxUnitSize + '; /*-- ' + emPxInputTarget.value + 'px / ' + emPxInputParent.value + 'px --*/';
 				}
 			}
 			// -- END: Pixels to EM
 
 			// -- START: percentage-calculator
 			// set defaults
+			var percentageValue = document.querySelector('#percentage-value'),
+				baseValue = document.querySelector('#base-value'),
+				percentageOutput = document.querySelector('#percentage-result');
+
 
 			// calculation
+			document.addEventListener('keyup', percentageKeyUpHandler, false);
+			function percentageKeyUpHandler(){
+				percentageResult =  Math.round(percentageValue.value / baseValue.value * 100 * 100) / 100;
+				percentageSaving = Math.round((100 - percentageResult) * -1 * 100) / 100;
+				percentageOutputResult();
+			};
+
 			// output
+			function percentageOutputResult() {
+				if(isNaN(percentageResult) || percentageResult == 0 || percentageResult === Infinity) {
+					percentageOutput.innerHTML = clearDefault;
+				} else {
+					percentageOutput.innerHTML = percentageResult + '% / ' + percentageSaving + '%';
+				}
+			}
 			// -- END: percentage-calculator
 
 			// -- START: conversions-calculator
 			// set defaults
+			var chancesValue = document.querySelector('#visitors-value'),
+				conversionsValue = document.querySelector('#conversions-value'),
+				conversionRateOutput = document.querySelector('#conversion-result');
+
 
 			// calculation
+			document.addEventListener('keyup', conversionKeyUpHandler, false);
+			function conversionKeyUpHandler(){
+				conversionResult =  Math.round(conversionsValue.value / chancesValue.value * 100 * 10000) / 10000;
+				conversionOutputResult();
+			};
+
 			// output
+			function conversionOutputResult() {
+				if(isNaN(conversionResult) || conversionResult == 0 || conversionResult === Infinity) {
+					conversionRateOutput.innerHTML = clearDefault;
+				} else {
+					if(conversionResult > 100) {
+						conversionRateOutput.innerHTML = '? -> ' + conversionResult + '%';
+					} else {
+						conversionRateOutput.innerHTML = conversionResult + '%';
+					}
+				}
+			}
 			// -- END: conversions-calculator
 		});
 	</script>
@@ -223,17 +282,17 @@
 
 <body>
 	<!-- START: em to px -->
-	<div class="widget" id="em-px-calculator">
+	<form class="widget" id="em-px-calculator">
 		<h2 class="widget__title">EM to Pixels</h2>
 		<div class="widget__row">
 			<label class="widget__label widget__label--pre" for="em-px-input-target">desired output</label>
 			<input type="number" min="0" value="" placeholder="12" id="em-px-input-target" class="widget__input js-input" />
-			<label class="widget__label widget__label--after"for="em-px-input-target">px</label>
+			<label class="widget__label widget__label--after" for="em-px-input-target">px</label>
 		</div>
 		<div class="widget__row">
 			<label class="widget__label widget__label--pre" for="em-px-input-parent">set parent size to</label>
 			<input type="number" value="16" placeholder="16" id="em-px-input-parent" class="widget__input js-input" />
-			<label class="widget__label widget__label--after"for="em-px-input-parent">px</label>
+			<label class="widget__label widget__label--after" for="em-px-input-parent">px</label>
 		</div>
 		<div id="em-px-result" class="widget__row widget__result">&nbsp;</div>
 		<div class="widget__row">
@@ -241,31 +300,52 @@
 			<label class="widget__label" for="em-px-unit-switch">rem</label>
 		</div>
 		<div class="widget__row">
-			<button class="widget__button js-copy" data-copy-source="em-px-result">Copy</button>
+			<button class="widget__button widget__button--secondary js-clear" data-clear-target="em-px-result" type="reset">clear</button>
+			<button class="widget__button js-copy" data-copy-source="em-px-result">copy</button>
 		</div>
-	</div>
+	</form>
 	<!-- END: em to px -->
 
 	<!-- START: percentage-calculator -->
-	<div class="widget" id="percentage-calculator">
+	<form class="widget" id="percentage-calculator">
 		<h2 class="widget__title">Calculate Percentages</h2>
 		<div class="widget__row">
+			<label class="widget__label widget__label--pre" for="base-value">base/old value</label>
+			<input type="number" value="100" placeholder="100" id="base-value" class="widget__input js-input" />
+			<label class="widget__label widget__label--after" for="base-value">%</label>
 		</div>
 		<div class="widget__row">
-			<button class="widget__button js-copy" data-copy-source="percentage-result">Copy</button>
+			<label class="widget__label widget__label--pre" for="percentage-value">new value</label>
+			<input type="number" value="" placeholder="10" id="percentage-value" class="widget__input js-input" />
+			<label class="widget__label widget__label--after" for="percentage-value">%</label>
 		</div>
-	</div>
+		<div id="percentage-result" class="widget__row widget__result">&nbsp;</div>
+		<div class="widget__row">
+			<button class="widget__button widget__button--secondary js-clear" data-clear-target="percentage-result" type="reset">clear</button>
+			<button class="widget__button widget__button--primary js-copy" data-copy-source="percentage-result">copy</button>
+		</div>
+	</form>
 	<!-- END: percentage-calculator -->
 
 	<!-- START: conversion-calculator -->
-	<div class="widget" id="conversion-calculator">
+	<form class="widget" id="conversion-calculator">
 		<h2 class="widget__title">Calculate Conversions</h2>
 		<div class="widget__row">
+			<label class="widget__label widget__label--pre" for="visitors-value">visitors</label>
+			<input type="number" value="1000" placeholder="1000" id="visitors-value" class="widget__input js-input" />
+			<label class="widget__label widget__label--after" for="visitors-value">☺</label>
 		</div>
 		<div class="widget__row">
-			<button class="widget__button js-copy" data-copy-source="conversion-result">Copy</button>
+			<label class="widget__label widget__label--pre" for="conversions-value">conversions</label>
+			<input type="number" value="" placeholder="30" id="conversions-value" class="widget__input js-input" />
+			<label class="widget__label widget__label--after" for="conversions-value">&check;</label>
 		</div>
-	</div>
+		<div id="conversion-result" class="widget__row widget__result">&nbsp;</div>
+		<div class="widget__row">
+			<button class="widget__button widget__button--secondary js-clear" data-clear-target="conversion-result" type="reset">clear</button>
+			<button class="widget__button js-copy" data-copy-source="conversion-result">copy</button>
+		</div>
+	</form>
 	<!-- END: conversion-calculator -->
 </body>
 </html>

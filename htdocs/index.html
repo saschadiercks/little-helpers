@@ -38,12 +38,16 @@
 			--base-border-radius: 3px;
 			--base-padding: .5rem;
 			--base-shadow-color: rgba(0,0,0,.2);
-			--label-width: 30%;
-			--label-max-width: 200px;
-			--input-width: 60%;
+			--input-width: 100%;
 			--input-border-color: #ddd;
 			--input-max-width: var(--label-max-width);
+			--widget-bg: var(--base-body-bg);
 			--widget-border: calc(var(--base-border-radius) * 2) solid var(--base-border-color);
+			--widget-columns: 30% 60% 1fr;
+			--widget-rows: 4;
+			--widget-row-height: 35px;
+			--widget-title-color: var(--base-body-color);
+			--widget-title-weight: 200;
 		}
 		/* -- reset -- */
 		html {
@@ -68,10 +72,11 @@
 			font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 			font-size: .875rem; /*-- 14px / 16px --*/
 			grid-gap: 1rem;
-			grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 			margin: 0;
 			padding: 1rem;
 		}
+		input { vertical-align: middle; }
 		input[type=number] {
  			-moz-appearance: textfield;
 			 	 appearance: textfield;
@@ -88,26 +93,47 @@
 			background-color: var(--widget-bg);
 			border-radius: calc(var(--base-border-radius) * 2);
 			border: var(--widget-border);
-			padding: var(--base-padding);
 		}
 		.widget__title {
-			border-bottom: 1px solid var(--base-border-color);
-			margin-top: 0;
-			padding-bottom: var(--base-padding);
+			background-color: var(--base-border-color);
+			border: var(--base-border-radius) solid var(--widget-bg);
+			color: var(--widget-title-color);
+			font-weight: var(--widget-title-weight);
+			margin: 0;
+			padding: var(--base-padding);
 			text-align: center;
+			width: 100%;
 		}
-		.widget__row { margin-bottom: var(--base-padding); }
+		.widget__body {
+			align-items: center;
+			display: grid;
+			grid-gap: var(--base-padding);
+			grid-template-columns: var(--widget-columns);
+			grid-template-rows: repeat(var(--widget-rows),var(--widget-row-height));
+			padding: var(--base-padding);
+			width: 100%;
+		}
+		.widget__result {
+			font-family: 'Courier New', Courier, monospace;
+			grid-column-start: 2;
+			grid-row: 3;
+		}
+		.widget__checkbox {
+			grid-column-start: 1;
+			grid-row: var(--widget-rows);
+		}
+		.widget__buttons {
+			grid-column-start: 2;
+			grid-row: var(--widget-rows);
+		}
 		.widget__label {
-			display: inline-block;
-			max-width: var(--label-max-width);
+			grid-column-start: 1;
 			padding: var(--base-padding) 0;
 			vertical-align: middle;
 		}
-		.widget__label.widget__label--pre {
-			text-align: right;
-			width: var(--label-width);
-		}
+		.widget__label.widget__label--pre { text-align: right; }
 		.widget__input {
+			grid-column-start: 2;
 			border: 1px solid var(--input-border-color);
 			border-radius: var(--base-border-radius);
 			box-shadow: inset 1px 1px 3px var(--base-shadow-color);
@@ -115,6 +141,7 @@
 			width: var(--input-width);
 		}
 		.widget__label.widget__label--after {
+			grid-column-start: 3;
 			margin-left: -1rem;				/* remove whitespace */
 			text-align: right;
 			transform: translateX(-100%);	/* move over input */
@@ -129,7 +156,7 @@
 			border: 1px solid var(--base-button-bg);
 			color: var(--base-button-color);
 			cursor: pointer;
-			font-weight: 600;
+			font-weight: bold;
 			width: calc(var(--input-width) / 2 - .2rem);
 			padding: var(--base-padding);
 			transition: .2s background-color ease;
@@ -144,10 +171,6 @@
 		.widget__button--secondary {
 			background-color: var(--base-button-color);
 			color: var(--base-button-bg);
-		}
-		.widget__result {
-			font-family: 'Courier New', Courier, monospace;
-			margin-left: calc(1% + var(--label-width));
 		}
 	</style>
 
@@ -290,24 +313,26 @@
 	<!-- START: em to px -->
 	<form class="widget" id="em-px-calculator">
 		<h2 class="widget__title">Pixels to (R)EM</h2>
-		<div class="widget__row">
+		<div class="widget__body">
 			<label class="widget__label widget__label--pre" for="em-px-input-target">desired output</label>
 			<input type="number" min="0" value="" placeholder="12" id="em-px-input-target" class="widget__input js-input" />
 			<label class="widget__label widget__label--after" for="em-px-input-target">px</label>
-		</div>
-		<div class="widget__row">
+
 			<label class="widget__label widget__label--pre" for="em-px-input-parent">set parent size to</label>
 			<input type="number" value="16" placeholder="16" id="em-px-input-parent" class="widget__input js-input" />
 			<label class="widget__label widget__label--after" for="em-px-input-parent">px</label>
-		</div>
-		<div id="em-px-result" class="widget__row widget__result">&nbsp;</div>
-		<div class="widget__row">
-			<input type="checkbox" id="em-px-unit-switch" class="widget__checkbox js-input" />
-			<label class="widget__label" for="em-px-unit-switch">rem?</label>
-		</div>
-		<div class="widget__row">
-			<button class="widget__button widget__button--secondary js-clear" data-clear-target="em-px-result" type="reset">clear</button>
-			<button class="widget__button js-copy" data-copy-source="em-px-result">copy</button>
+
+			<div id="em-px-result" class="widget__result">&nbsp;</div>
+
+			<div class="widget__checkbox">
+				<input type="checkbox" id="em-px-unit-switch" class="js-input" />
+				<label class="widget__label" for="em-px-unit-switch">rem?</label>
+			</div>
+
+			<div class="widget__buttons">
+				<button class="widget__button widget__button--secondary js-clear" data-clear-target="em-px-result" type="reset">clear</button>
+				<button class="widget__button js-copy" data-copy-source="em-px-result">copy</button>
+			</div>
 		</div>
 	</form>
 	<!-- END: em to px -->
@@ -315,18 +340,19 @@
 	<!-- START: percentage-calculator -->
 	<form class="widget" id="percentage-calculator">
 		<h2 class="widget__title">Calculate Percentages</h2>
-		<div class="widget__row">
+		<div class="widget__body">
 			<label class="widget__label widget__label--pre" for="base-value">base/old value</label>
 			<input type="number" value="100" placeholder="100" id="base-value" class="widget__input js-input" />
-		</div>
-		<div class="widget__row">
+
 			<label class="widget__label widget__label--pre" for="percentage-value">new value</label>
 			<input type="number" value="" placeholder="10" id="percentage-value" class="widget__input js-input" />
-		</div>
-		<div id="percentage-result" class="widget__row widget__result">&nbsp;</div>
-		<div class="widget__row">
-			<button class="widget__button widget__button--secondary js-clear" data-clear-target="percentage-result" type="reset">clear</button>
-			<button class="widget__button widget__button--primary js-copy" data-copy-source="percentage-result">copy</button>
+
+			<div id="percentage-result" class="widget__result">&nbsp;</div>
+
+			<div class="widget__buttons">
+				<button class="widget__button widget__button--secondary js-clear" data-clear-target="percentage-result" type="reset">clear</button>
+				<button class="widget__button widget__button--primary js-copy" data-copy-source="percentage-result">copy</button>
+			</div>
 		</div>
 	</form>
 	<!-- END: percentage-calculator -->
@@ -334,20 +360,21 @@
 	<!-- START: conversion-calculator -->
 	<form class="widget" id="conversion-calculator">
 		<h2 class="widget__title">Calculate Conversions</h2>
-		<div class="widget__row">
+		<div class="widget__body">
 			<label class="widget__label widget__label--pre" for="visitors-value">visitors</label>
 			<input type="number" value="1000" placeholder="1000" id="visitors-value" class="widget__input js-input" />
 			<label class="widget__label widget__label--after" for="visitors-value">☺</label>
-		</div>
-		<div class="widget__row">
+
 			<label class="widget__label widget__label--pre" for="conversions-value">conversions</label>
 			<input type="number" value="" placeholder="30" id="conversions-value" class="widget__input js-input" />
 			<label class="widget__label widget__label--after" for="conversions-value">&check;</label>
-		</div>
-		<div id="conversion-result" class="widget__row widget__result">&nbsp;</div>
-		<div class="widget__row">
-			<button class="widget__button widget__button--secondary js-clear" data-clear-target="conversion-result" type="reset">clear</button>
-			<button class="widget__button js-copy" data-copy-source="conversion-result">copy</button>
+
+			<div id="conversion-result" class="widget__row widget__result">&nbsp;</div>
+
+			<div class="widget__buttons">
+				<button class="widget__button widget__button--secondary js-clear" data-clear-target="conversion-result" type="reset">clear</button>
+				<button class="widget__button js-copy" data-copy-source="conversion-result">copy</button>
+			</div>
 		</div>
 	</form>
 	<!-- END: conversion-calculator -->

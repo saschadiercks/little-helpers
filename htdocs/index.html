@@ -153,13 +153,19 @@
 
 	<script type="text/javascript">
 		document.addEventListener('DOMContentLoaded',function(){
+			// -- START: add global Event Listener to selector with function-call
+			function addEventListenerToElement(event,elements,functionToCall){
+				for(var i = 0; i < elements.length; i++){
+					elements[i].addEventListener(event,functionToCall);
+				}
+			}
+			// -- END: add Event Listener...
+
 			// -- START: copy values
 			// target (must be unique/id) to copy from is assigned to button via data-
 			var copyTrigger = document.querySelectorAll('.js-copy');
-			for(var i = 0; i < copyTrigger.length; i++){
-				copyTrigger[i].addEventListener('click', copyContent);
-			}
 
+			addEventListenerToElement('click',copyTrigger,copyContent)
 			function copyContent(event) {
 				var selection = document.querySelector('#' + this.dataset.copySource);
 				window.getSelection().selectAllChildren(selection);
@@ -174,10 +180,7 @@
 			var clearTrigger = document.querySelectorAll('.js-clear'),
 				clearDefault = '&nbsp;';
 
-			for(var i = 0; i < clearTrigger.length; i++){
-				clearTrigger[i].addEventListener('click', clearContent);
-			}
-
+			addEventListenerToElement('click',clearTrigger,clearContent);
 			function clearContent() {
 				var clearTarget = document.querySelector('#' + this.dataset.clearTarget);
 				clearTarget.innerHTML = clearDefault;
@@ -186,16 +189,16 @@
 
 			// -- START: Pixels to EM
 			// set defaults
-			var emPxUnitSwitch = document.querySelector('#em-px-unit-switch'),
+			var emPxInput = document.querySelectorAll('#em-px-calculator .js-input'),
+				emPxUnitSwitch = document.querySelector('#em-px-unit-switch'),
 				emPxOutput = document.querySelector('#em-px-result'),
-				emPxInput = document.querySelectorAll('.js-input'),
 				emPxInputTarget = document.querySelector('#em-px-input-target'),
 				emPxInputParent = document.querySelector('#em-px-input-parent'),
 				emPxResult = 0,
 				emPxUnitSize = 'em';
 
 			// calculation
-			document.addEventListener('keyup', emPxKeyUpHandler, false);
+			addEventListenerToElement('keyup',emPxInput,emPxKeyUpHandler);
 			function emPxKeyUpHandler(){
 				emPxResult =  Math.round(emPxInputTarget.value / emPxInputParent.value * 10000) / 10000;
 				emPxOutputResult();
@@ -227,13 +230,14 @@
 
 			// -- START: percentage-calculator
 			// set defaults
-			var percentageValue = document.querySelector('#percentage-value'),
+			var percentageCalculatorInput = document.querySelectorAll('#percentage-calculator .js-input'),
+				percentageValue = document.querySelector('#percentage-value'),
 				baseValue = document.querySelector('#base-value'),
 				percentageOutput = document.querySelector('#percentage-result');
 
 
 			// calculation
-			document.addEventListener('keyup', percentageKeyUpHandler, false);
+			addEventListenerToElement('keyup',percentageCalculatorInput,percentageKeyUpHandler);
 			function percentageKeyUpHandler(){
 				percentageResult =  Math.round(percentageValue.value / baseValue.value * 100 * 100) / 100;
 				percentageSaving = Math.round((100 - percentageResult) * -1 * 100) / 100;
@@ -250,15 +254,16 @@
 			}
 			// -- END: percentage-calculator
 
-			// -- START: conversions-calculator
+			// -- START: conversion-calculator
 			// set defaults
-			var chancesValue = document.querySelector('#visitors-value'),
+			var conversionCalculatorInput = document.querySelectorAll('#conversion-calculator .js-input'),
+				chancesValue = document.querySelector('#visitors-value'),
 				conversionsValue = document.querySelector('#conversions-value'),
 				conversionRateOutput = document.querySelector('#conversion-result');
 
 
 			// calculation
-			document.addEventListener('keyup', conversionKeyUpHandler, false);
+			addEventListenerToElement('keyup',conversionCalculatorInput,conversionKeyUpHandler);
 			function conversionKeyUpHandler(){
 				conversionResult =  Math.round(conversionsValue.value / chancesValue.value * 100 * 10000) / 10000;
 				conversionOutputResult();
@@ -276,7 +281,7 @@
 					}
 				}
 			}
-			// -- END: conversions-calculator
+			// -- END: conversion-calculator
 		});
 	</script>
 </head>
@@ -313,12 +318,10 @@
 		<div class="widget__row">
 			<label class="widget__label widget__label--pre" for="base-value">base/old value</label>
 			<input type="number" value="100" placeholder="100" id="base-value" class="widget__input js-input" />
-			<label class="widget__label widget__label--after" for="base-value">%</label>
 		</div>
 		<div class="widget__row">
 			<label class="widget__label widget__label--pre" for="percentage-value">new value</label>
 			<input type="number" value="" placeholder="10" id="percentage-value" class="widget__input js-input" />
-			<label class="widget__label widget__label--after" for="percentage-value">%</label>
 		</div>
 		<div id="percentage-result" class="widget__row widget__result">&nbsp;</div>
 		<div class="widget__row">

@@ -48,6 +48,7 @@
 			--widget-row-height: 35px;
 			--widget-title-color: var(--base-body-color);
 			--widget-title-weight: 200;
+			--widget-result-font-weight: 600;
 		}
 		/* -- reset -- */
 		html {
@@ -110,11 +111,13 @@
 			grid-gap: var(--base-padding);
 			grid-template-columns: var(--widget-columns);
 			grid-template-rows: repeat(var(--widget-rows),var(--widget-row-height));
+			margin-top: var(--base-padding);
 			padding: var(--base-padding);
 			width: 100%;
 		}
 		.widget__result {
 			font-family: 'Courier New', Courier, monospace;
+			font-weight: var(--widget-result-font-weight);
 			grid-column-start: 2;
 			grid-row: 3;
 		}
@@ -172,10 +175,20 @@
 			background-color: var(--base-button-color);
 			color: var(--base-button-bg);
 		}
+
+		#em-px-calculator .widget__result {
+			grid-column-start: 1;
+			grid-column-end: 3;
+			text-align: right;
+			white-space: nowrap;
+		}
 	</style>
 
 	<script type="text/javascript">
 		document.addEventListener('DOMContentLoaded',function(){
+			const errorPrefix = '? --> ',
+				clearDefault = '';
+
 			// -- START: add global Event Listener to selector with function-call
 			function addEventListenerToElement(event,elements,functionToCall){
 				for(var i = 0; i < elements.length; i++){
@@ -200,8 +213,7 @@
 
 			// -- START: clear values
 			// target (must be unique/id) to copy from is assigned to button via data-
-			var clearTrigger = document.querySelectorAll('.js-clear'),
-				clearDefault = '&nbsp;';
+			var clearTrigger = document.querySelectorAll('.js-clear');
 
 			addEventListenerToElement('click',clearTrigger,clearContent);
 			function clearContent() {
@@ -272,7 +284,12 @@
 				if(isNaN(percentageResult) || percentageResult == 0 || percentageResult === Infinity) {
 					percentageOutput.innerHTML = clearDefault;
 				} else {
-					percentageOutput.innerHTML = percentageResult + '% / ' + percentageSaving + '%';
+					if(percentageResult > 100) {
+						percentagePrefix = errorPrefix;
+					} else {
+						percentagePrefix = '';
+					}
+					percentageOutput.innerHTML = percentagePrefix + percentageResult + '% / ' + percentageSaving + '%';
 				}
 			}
 			// -- END: percentage-calculator
@@ -298,10 +315,11 @@
 					conversionRateOutput.innerHTML = clearDefault;
 				} else {
 					if(conversionResult > 100) {
-						conversionRateOutput.innerHTML = '? -> ' + conversionResult + '%';
+						conversionPrefix = errorPrefix;
 					} else {
-						conversionRateOutput.innerHTML = 'CR: ' + conversionResult + '%';
+						conversionPrefix = 'CR: ';
 					}
+					conversionRateOutput.innerHTML = conversionPrefix + conversionResult + '%';
 				}
 			}
 			// -- END: conversion-calculator

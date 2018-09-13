@@ -230,7 +230,7 @@
 				emPxInputTarget = document.querySelector('#em-px-input-target'),
 				emPxInputParent = document.querySelector('#em-px-input-parent'),
 				emPxResult = 0,
-				emPxUnitSize = 'em';
+				emPxUnitSize = 'rem';
 
 			// calculation
 			addEventListenerToElement('keyup',emPxInput,emPxKeyUpHandler);
@@ -343,7 +343,7 @@
 			<div id="em-px-result" class="widget__result">&nbsp;</div>
 
 			<div class="widget__checkbox">
-				<input type="checkbox" id="em-px-unit-switch" class="js-input" />
+				<input type="checkbox" id="em-px-unit-switch" class="js-input" checked="checked" />
 				<label class="widget__label" for="em-px-unit-switch">rem?</label>
 			</div>
 

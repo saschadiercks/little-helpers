@@ -30,6 +30,7 @@
 		/* -- variables -- */
 		:root {
 			--base-body-bg: #fdfdfd;
+			--base-body-bg-alpha: #fdfdfddd;
 			--base-body-color: #444;
 			--base-button-bg: #007acc;
 			--base-button-bg-hover: #0e8ee4;
@@ -44,6 +45,7 @@
 			--widget-bg: var(--base-body-bg);
 			--widget-border: calc(var(--base-border-radius) * 2) solid var(--base-border-color);
 			--widget-columns: 30% 60% 1fr;
+			--widget-min-width: 300px;
 			--widget-rows: 4;
 			--widget-row-height: 35px;
 			--widget-title-color: var(--base-body-color);
@@ -69,13 +71,9 @@
 		body {
 			background-color: var(--base-body-bg);
 			color: var(--base-body-color);
-			display: grid;
 			font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 			font-size: .875rem; /*-- 14px / 16px --*/
-			grid-gap: 1rem;
-			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 			margin: 0;
-			padding: 1rem;
 		}
 		input {
 			border: 1px solid var(--input-border-color);
@@ -93,6 +91,62 @@
 			appearance: none;
 			margin: 0;
 		}
+
+		.js-sticky { position: fixed; }
+
+		/* -- lists -- */
+		.list {
+			list-style-type: none;
+			margin-top: 0;
+			margin-bottom: 0;
+			padding-left: 0;
+		}
+		.list--horizontal li { display: inline-block; }
+
+		/* -- page structure -- */
+		.header {
+			background-color: var(--base-body-bg-alpha);
+			box-shadow: 0 0 2px var(--base-shadow-color);
+			padding: var(--base-padding);
+			text-align: center;
+			top: 0;
+			width: 100%;
+			z-index: 2;
+		}
+		.header__title {
+			font-size: 1rem;
+			font-weight: 600;
+			margin: 0;
+		}
+		.header__text {
+			font-size: .75rem;
+			margin: 0;
+		}
+
+		.content {
+			display: grid;
+			grid-gap: var(--base-padding);
+			grid-template-columns: repeat(auto-fit, minmax(var(--widget-min-width), 1fr));
+			margin: var(--base-padding);
+		}
+		.footer {
+			background-color: var(--base-button-bg);
+			bottom: 0;
+			color: var(--base-button-color);
+			font-size: .75rem;
+			padding-left: var(--base-padding);
+			padding-right: var(--base-padding);
+			width: 100%;
+			z-index: 2;
+		}
+		.footer a {
+			color: inherit;
+			display: inline-block;
+			padding-top: var(--base-padding);
+			padding-bottom: var(--base-padding);
+		}
+		.footer__description { float: left; }
+		.footer__social { float: right; }
 
 		/* -- widgets -- */
 		.widget {
@@ -191,6 +245,14 @@
 			const errorPrefix = '? --> ',
 				clearDefault = '';
 
+			// helper: change classes
+			function addClass(element,className) {
+				element.classList.add(className);
+			}
+			function removeClass(element,className) {
+				element.classList.remove(className);
+			}
+
 			// -- START: add global Event Listener to selector with function-call
 			function addEventListenerToElement(event,elements,functionToCall){
 				for(var i = 0; i < elements.length; i++){
@@ -198,6 +260,27 @@
 				}
 			}
 			// -- END: add Event Listener...
+
+			// START: make element sticky (via position in css)
+			function stickyElement(stickyId,compensateId,compensateProperty) {
+				var compensateElement = document.getElementById(compensateId);
+				var stickyElement = document.getElementById(stickyId);
+				var stickyHeight = stickyElement.clientHeight + 'px';
+				addClass(stickyElement,'js-sticky');
+
+				//add Element-Height as defined property to desired element
+				compensateElement.style.setProperty(compensateProperty,stickyHeight);
+			}
+
+			//sticky header (item(Id) to fix, item(Id) with property to compensate fix)
+			function stickyElements() {
+				stickyElement('application-header','application-content','padding-top');
+				stickyElement('application-footer','application-content','padding-bottom');
+			}
+
+			stickyElements();
+			window.onresize = stickyElements;
+			// END: make element sticky (via position in css)
 
 			// -- START: copy values
 			// target (must be unique/id) to copy from is assigned to button via data-
@@ -330,73 +413,92 @@
 </head>
 
 <body>
-	<!-- START: em to px -->
-	<form class="widget" id="em-px-calculator">
-		<h2 class="widget__title">Pixels to (R)EM</h2>
-		<div class="widget__body">
-			<label class="widget__label widget__label--pre" for="em-px-input-target">desired output</label>
-			<input type="number" min="0" value="" placeholder="12" id="em-px-input-target" class="widget__input js-input" />
-			<label class="widget__label widget__label--after" for="em-px-input-target">px</label>
+	<header class="header" id="application-header">
+		<h1 class="header__title">Little Helpers</h1>
+		<p class="header__text">small tools to improve your development-life</p>
+	</header>
 
-			<label class="widget__label widget__label--pre" for="em-px-input-parent">set parent size to</label>
-			<input type="number" value="16" placeholder="16" id="em-px-input-parent" class="widget__input js-input" />
-			<label class="widget__label widget__label--after" for="em-px-input-parent">px</label>
+	<main class="content" id="application-content">
 
-			<div id="em-px-result" class="widget__result">&nbsp;</div>
+		<!-- START: em to px -->
+		<form class="widget" id="em-px-calculator">
+			<h2 class="widget__title">Pixels to (R)EM</h2>
+			<div class="widget__body">
+				<label class="widget__label widget__label--pre" for="em-px-input-target">desired output</label>
+				<input type="number" min="0" value="" placeholder="12" id="em-px-input-target" class="widget__input js-input" />
+				<label class="widget__label widget__label--after" for="em-px-input-target">px</label>
 
-			<div class="widget__checkbox">
-				<input type="checkbox" id="em-px-unit-switch" class="js-input" checked="checked" />
-				<label class="widget__label" for="em-px-unit-switch">rem?</label>
+				<label class="widget__label widget__label--pre" for="em-px-input-parent">set parent size to</label>
+				<input type="number" value="16" placeholder="16" id="em-px-input-parent" class="widget__input js-input" />
+				<label class="widget__label widget__label--after" for="em-px-input-parent">px</label>
+
+				<div id="em-px-result" class="widget__result">&nbsp;</div>
+
+				<div class="widget__checkbox">
+					<input type="checkbox" id="em-px-unit-switch" class="js-input" checked="checked" />
+					<label class="widget__label" for="em-px-unit-switch">rem?</label>
+				</div>
+
+				<div class="widget__buttons">
+					<button class="widget__button widget__button--secondary js-clear" data-clear-target="em-px-result" type="reset">clear</button>
+					<button class="widget__button js-copy" data-copy-source="em-px-result">copy</button>
+				</div>
 			</div>
+		</form>
+		<!-- END: em to px -->
 
-			<div class="widget__buttons">
-				<button class="widget__button widget__button--secondary js-clear" data-clear-target="em-px-result" type="reset">clear</button>
-				<button class="widget__button js-copy" data-copy-source="em-px-result">copy</button>
+		<!-- START: percentage-calculator -->
+		<form class="widget" id="percentage-calculator">
+			<h2 class="widget__title">Calculate Percentages</h2>
+			<div class="widget__body">
+				<label class="widget__label widget__label--pre" for="base-value">base/old value</label>
+				<input type="number" value="100" placeholder="100" id="base-value" class="widget__input js-input" />
+
+				<label class="widget__label widget__label--pre" for="percentage-value">new value</label>
+				<input type="number" value="" placeholder="10" id="percentage-value" class="widget__input js-input" />
+
+				<div id="percentage-result" class="widget__result">&nbsp;</div>
+
+				<div class="widget__buttons">
+					<button class="widget__button widget__button--secondary js-clear" data-clear-target="percentage-result" type="reset">clear</button>
+					<button class="widget__button widget__button--primary js-copy" data-copy-source="percentage-result">copy</button>
+				</div>
 			</div>
+		</form>
+		<!-- END: percentage-calculator -->
+
+		<!-- START: conversion-calculator -->
+		<form class="widget" id="conversion-calculator">
+			<h2 class="widget__title">Calculate Conversions</h2>
+			<div class="widget__body">
+				<label class="widget__label widget__label--pre" for="visitors-value">visitors</label>
+				<input type="number" value="1000" placeholder="1000" id="visitors-value" class="widget__input js-input" />
+				<label class="widget__label widget__label--after" for="visitors-value">☺</label>
+
+				<label class="widget__label widget__label--pre" for="conversions-value">conversions</label>
+				<input type="number" value="" placeholder="30" id="conversions-value" class="widget__input js-input" />
+				<label class="widget__label widget__label--after" for="conversions-value">&check;</label>
+
+				<div id="conversion-result" class="widget__row widget__result">&nbsp;</div>
+
+				<div class="widget__buttons">
+					<button class="widget__button widget__button--secondary js-clear" data-clear-target="conversion-result" type="reset">clear</button>
+					<button class="widget__button js-copy" data-copy-source="conversion-result">copy</button>
+				</div>
+			</div>
+		</form>
+		<!-- END: conversion-calculator -->
+	</main>
+
+	<footer class="footer" id="application-footer">
+		<div class="footer__description"><a href="https://github.com/saschadiercks/little-helpers">Fork me on Github</a></div>
+		<div class="footer__social">
+			<ul class="list list--horizontal">
+				<li><a href="http://metafolio.de">home</a></li>
+				<li><a href="https://github.com/saschadiercks">github</a></li>
+				<li><a href="https://m.twitter.com/saschadiercks">twitter</a></li>
+			</ul>
 		</div>
-	</form>
-	<!-- END: em to px -->
-
-	<!-- START: percentage-calculator -->
-	<form class="widget" id="percentage-calculator">
-		<h2 class="widget__title">Calculate Percentages</h2>
-		<div class="widget__body">
-			<label class="widget__label widget__label--pre" for="base-value">base/old value</label>
-			<input type="number" value="100" placeholder="100" id="base-value" class="widget__input js-input" />
-
-			<label class="widget__label widget__label--pre" for="percentage-value">new value</label>
-			<input type="number" value="" placeholder="10" id="percentage-value" class="widget__input js-input" />
-
-			<div id="percentage-result" class="widget__result">&nbsp;</div>
-
-			<div class="widget__buttons">
-				<button class="widget__button widget__button--secondary js-clear" data-clear-target="percentage-result" type="reset">clear</button>
-				<button class="widget__button widget__button--primary js-copy" data-copy-source="percentage-result">copy</button>
-			</div>
-		</div>
-	</form>
-	<!-- END: percentage-calculator -->
-
-	<!-- START: conversion-calculator -->
-	<form class="widget" id="conversion-calculator">
-		<h2 class="widget__title">Calculate Conversions</h2>
-		<div class="widget__body">
-			<label class="widget__label widget__label--pre" for="visitors-value">visitors</label>
-			<input type="number" value="1000" placeholder="1000" id="visitors-value" class="widget__input js-input" />
-			<label class="widget__label widget__label--after" for="visitors-value">☺</label>
-
-			<label class="widget__label widget__label--pre" for="conversions-value">conversions</label>
-			<input type="number" value="" placeholder="30" id="conversions-value" class="widget__input js-input" />
-			<label class="widget__label widget__label--after" for="conversions-value">&check;</label>
-
-			<div id="conversion-result" class="widget__row widget__result">&nbsp;</div>
-
-			<div class="widget__buttons">
-				<button class="widget__button widget__button--secondary js-clear" data-clear-target="conversion-result" type="reset">clear</button>
-				<button class="widget__button js-copy" data-copy-source="conversion-result">copy</button>
-			</div>
-		</div>
-	</form>
-	<!-- END: conversion-calculator -->
+	</footer>
 </body>
 </html>
